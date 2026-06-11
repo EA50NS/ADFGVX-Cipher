@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <math.h>
 
 #define ADFGVX "ADFGVX"
 char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+char square[6][6];
+char substitution[6][6]; 
 
 void random_alpha(){
     srand(time(NULL));
@@ -24,10 +25,8 @@ void random_alpha(){
 
 void initialise_polybius_square(){
     random_alpha();
-    printf("rand alpha test: %s \n", alphabet);
-    char square[6][6];
 
-    int length = sqrt(strlen(alphabet)); // Is this REALLY necessary? Why not just use '6'?
+    int length = 6;
    
     int k = 0;
     for(int i = 0; i < length; i++){
@@ -36,28 +35,26 @@ void initialise_polybius_square(){
             k++;
         }
     }
+   
 
-    printf("printing square: \n");
+
+    printf("Initialising Polyibus Square\n");
+    printf(" | A D F G V X\n");
+    printf("--------------\n");
     for (int i = 0; i < length; i++){
+        printf("%c| ", ADFGVX[i]);
         for (int j = 0; j < length; j++){
             printf("%c ", square[i][j]);
         }
         printf("\n");
     }
-
-
 }
 
 
 int main (void){
-   
-   // printf("Initialising Polyibus Square\n");
-   // printf(" | A D F G V X\n");
-   // printf("--------------\n");
-   initialise_polybius_square();
+
+    char message[] = "ATTACKAT1200AM";
+    initialise_polybius_square();
     
-
-
-
     return 0;
 }
