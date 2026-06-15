@@ -4,9 +4,25 @@
 #include <time.h>
 
 #define ADFGVX "ADFGVX"
+#define KEY "BISMARCK"
 char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 char square[6][6];
-char substitution[6][6]; 
+char substitution[128];
+
+void square_lookup(char *message){
+    int a = 0;
+    for (int i = 0; i < strlen(message); i++){
+        for (int j = 0; j < 6; j++){
+            for (int k = 0; k < 6; k++){
+                if (square[j][k] == message[i]){
+                    substitution[a] = ADFGVX[j];
+                    substitution[a+1] = ADFGVX[k];
+                    a += 2;
+                }
+            }
+        }
+    }
+}
 
 void random_alpha(){
     srand(time(NULL));
@@ -36,8 +52,6 @@ void initialise_polybius_square(){
         }
     }
    
-
-
     printf("Initialising Polyibus Square\n");
     printf(" | A D F G V X\n");
     printf("--------------\n");
@@ -55,6 +69,10 @@ int main (void){
 
     char message[] = "ATTACKAT1200AM";
     initialise_polybius_square();
+    square_lookup(message); 
+
+    printf("plain text message: %s\n", message);
+    printf("substitued message: %s\n", substitution);
     
     return 0;
 }
