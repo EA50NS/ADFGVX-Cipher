@@ -5,9 +5,26 @@
 
 #define ADFGVX "ADFGVX"
 #define KEY "BISMARCK"
+#define KEY_LENGTH strlen(KEY)
 char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 char square[6][6];
 char substitution[128];
+
+char** columnar_transposition(char *substitution){ 
+    int rows = strlen(substitution) / KEY_LENGTH + 1; 
+
+    char transposition[rows][KEY_LENGTH]; 
+    
+    int k = 0;
+    for (int i = 0; i < rows; i++){
+        for (int j = 0; j < KEY_LENGTH; j++){
+            transposition[rows][KEY_LENGTH] = substitution[k];
+            k++;
+        }
+    }
+    return transposition;
+}
+
 
 void square_lookup(char *message){
     int a = 0;
@@ -74,5 +91,7 @@ int main (void){
     printf("plain text message: %s\n", message);
     printf("substitued message: %s\n", substitution);
     
+    columnar_transposition(substitution);
+
     return 0;
 }
