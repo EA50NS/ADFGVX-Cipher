@@ -10,18 +10,31 @@ char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 char square[6][6];
 char substitution[128];
 
-char** columnar_transposition(char *substitution){ 
-    int rows = strlen(substitution) / KEY_LENGTH + 1; 
 
-    char transposition[rows][KEY_LENGTH]; 
+// TODO: order the substitution by alpha order of key, then return full encrypted text.
+int compare_chars(const void *a, const void *b){
+    return *(const char *)a - *(const char *)b;
+}
+
+char** columnar_transposition(char *substitution){ 
+    int rows = strlen(substitution) / KEY_LENGTH; 
+    if ((strlen(substitution) % KEY_LENGTH) != 0){
+        rows++;
+    }
+
+    char **transposition = malloc(rows * sizeof(char*));
+    for (int i = 0; i < rows; i++){
+        transposition[i] = malloc(KEY_LENGTH * sizeof(char));
+    }
     
     int k = 0;
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < KEY_LENGTH; j++){
-            transposition[rows][KEY_LENGTH] = substitution[k];
+            transposition[i][j] = substitution[k];
             k++;
         }
     }
+    
     return transposition;
 }
 
@@ -69,7 +82,7 @@ void initialise_polybius_square(){
         }
     }
    
-    printf("Initialising Polyibus Square\n");
+    printf("Initialising Polybius Square\n");
     printf(" | A D F G V X\n");
     printf("--------------\n");
     for (int i = 0; i < length; i++){
@@ -89,9 +102,26 @@ int main (void){
     square_lookup(message); 
 
     printf("plain text message: %s\n", message);
-    printf("substitued message: %s\n", substitution);
+    printf("substituted message: %s\n", substitution);
     
-    columnar_transposition(substitution);
+    char** msg_substitution = columnar_transposition(substitution);
+
+    for (int i = 0; i < KEY_LENGTH; i++){
+       printf("%c ", KEY[i]); 
+    }
+    printf("\n");
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < KEY_LENGTH; j++){
+            printf("%c ", msg_substitution[i][j]);
+        }
+        printf("\n");
+    }
+
+    char sorted_key[] = KEY;
+    qsort(sorted_key, KEY_LENGTH, sizeof(char), compare_chars);
+    printf("sorted key: %s\n", sorted_key);
+
+
 
     return 0;
 }
