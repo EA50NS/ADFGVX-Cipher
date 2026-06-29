@@ -10,11 +10,44 @@ char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 char square[6][6];
 char substitution[128];
 
-
 // TODO: order the substitution by alpha order of key, then return full encrypted text.
 int compare_chars(const void *a, const void *b){
     return *(const char *)a - *(const char *)b;
 }
+
+void swap_column(int col1, int col2, int rows, char** message){
+    char key[] = KEY;
+
+    char temp = key[col1];
+    key[col1] = key[col2];
+    key[col2] = temp;
+
+    for (int r = 0; r < rows; r++) {
+        temp = message[r][col1];
+        message[r][col1] = message[r][col2];
+        message[r][col2] = temp;
+    }
+}
+
+char** final_step(char **msg_substitution){
+    char sorted_key[] = KEY;
+    qsort(sorted_key, KEY_LENGTH, sizeof(char), compare_chars);
+
+    int rows = strlen(substitution) / KEY_LENGTH;
+    if((strlen(substitution) % KEY_LENGTH) != 0){
+        rows++;
+    }
+        
+    for (int i = 0; i < KEY_LENGTH - 1; i++){
+        for (int j = i+1; j < KEY_LENGTH; j++){
+            if (KEY[i] > KEY[j]){
+                swap_column(i, j, rows, msg_substitution);
+            }
+        }
+    }
+    return msg_substitution;
+}
+
 
 char** columnar_transposition(char *substitution){ 
     int rows = strlen(substitution) / KEY_LENGTH; 
@@ -102,7 +135,7 @@ int main (void){
     square_lookup(message); 
 
     printf("plain text message: %s\n", message);
-    printf("substituted message: %s\n", substitution);
+    printf("substituted message: %s\n\n", substitution);
     
     char** msg_substitution = columnar_transposition(substitution);
 
@@ -117,11 +150,16 @@ int main (void){
         printf("\n");
     }
 
-    char sorted_key[] = KEY;
-    qsort(sorted_key, KEY_LENGTH, sizeof(char), compare_chars);
-    printf("sorted key: %s\n", sorted_key);
+    char** encrypted_msg = final_step(msg_substitution);
 
-
+    printf("\n");
+    printf("New substition: \n");
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < KEY_LENGTH; j++){
+            printf("%c ", encrypted_msg[i][j]);
+        }
+        printf("\n");
+    }
 
     return 0;
 }
