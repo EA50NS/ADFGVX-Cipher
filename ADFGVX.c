@@ -15,9 +15,7 @@ int compare_chars(const void *a, const void *b){
     return *(const char *)a - *(const char *)b;
 }
 
-void swap_column(int col1, int col2, int rows, char** message){
-    char key[] = KEY;
-
+void swap_column(char* key, int col1, int col2, int rows, char** message){
     char temp = key[col1];
     key[col1] = key[col2];
     key[col2] = temp;
@@ -30,9 +28,7 @@ void swap_column(int col1, int col2, int rows, char** message){
 }
 
 char** final_step(char **msg_substitution){
-    char sorted_key[] = KEY;
-    qsort(sorted_key, KEY_LENGTH, sizeof(char), compare_chars);
-
+    char key[] = KEY;
     int rows = strlen(substitution) / KEY_LENGTH;
     if((strlen(substitution) % KEY_LENGTH) != 0){
         rows++;
@@ -40,8 +36,8 @@ char** final_step(char **msg_substitution){
         
     for (int i = 0; i < KEY_LENGTH - 1; i++){
         for (int j = i+1; j < KEY_LENGTH; j++){
-            if (KEY[i] > KEY[j]){
-                swap_column(i, j, rows, msg_substitution);
+            if (key[i] > key[j]){
+                swap_column(key, i, j, rows, msg_substitution);
             }
         }
     }
@@ -50,6 +46,7 @@ char** final_step(char **msg_substitution){
 
 
 char** columnar_transposition(char *substitution){ 
+    int len = strlen(substitution);
     int rows = strlen(substitution) / KEY_LENGTH; 
     if ((strlen(substitution) % KEY_LENGTH) != 0){
         rows++;
@@ -63,7 +60,7 @@ char** columnar_transposition(char *substitution){
     int k = 0;
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < KEY_LENGTH; j++){
-            transposition[i][j] = substitution[k];
+            transposition[i][j] = (k < len) ? substitution[k] : ' '; // explicit pad
             k++;
         }
     }
@@ -159,6 +156,19 @@ int main (void){
             printf("%c ", encrypted_msg[i][j]);
         }
         printf("\n");
+    }
+
+    printf("\n");
+    printf("Final encrypted message:\n");
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < KEY_LENGTH; j++){
+            if ( encrypted_msg[i][j] == ' '){
+                continue;
+            }
+            else{
+                printf("%c", encrypted_msg[i][j]);
+            }
+        }
     }
 
     return 0;
